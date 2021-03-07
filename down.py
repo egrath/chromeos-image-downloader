@@ -16,6 +16,7 @@ import os
 import requests
 import backdrop_wallpaper_pb2
 
+
 if __name__=="__main__":
     # constants
     collections_url="https://clients3.google.com/cast/chromecast/home/wallpaper/collections?rt=b"
