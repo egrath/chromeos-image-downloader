@@ -15,6 +15,8 @@ import sys
 import os
 import mimetypes
 import requests
+import argparse
+
 import backdrop_wallpaper_pb2
 
 if __name__=="__main__":
@@ -22,24 +24,34 @@ if __name__=="__main__":
     collections_url="https://clients3.google.com/cast/chromecast/home/wallpaper/collections?rt=b"
     images_url="https://clients3.google.com/cast/chromecast/home/wallpaper/collection-images?rt=b"
 
-    # check command line arguments
-    for arg in sys.argv[1:]:
-        if arg=="--staging":
-            print("using alpha server instead of production")
-            collections_url=collections_url.replace("clients3","chromecast-staging.sandbox")
-        elif arg=="--dev":
-            print("using dev server instead of production")
-            collections_url=collections_url.replace("clients3","chromecast-dev.sandbox")
-
+    # parse arguments from command line
+    parser = argparse.ArgumentParser(description="Download Google Chrome OS Wallpapers")
+    parser.add_argument("--server",default="prod",help="server to use (prod|staging|dev), defaults to prod",action="store")
+    parser.add_argument("--region",default="en-US",help="region to use, defaults to en-US",action="store")    
+    parser.add_argument("--list-collections",default=False,help="only list available collections, don't download",action="store_true")
+    parser.add_argument("--unfiltered",default=False,help="don't set a request filter, default is google branded chromebook",action="store_true")
+    args = parser.parse_args()
+    
+    # which server to use
+    if args.server=="staging":
+        collections_url=collections_url.replace("clients3","chromecast-staging.sandbox")
+        images_url=images_url.replace("clients3","chromecast-staging.sandbox")
+    elif args.server=="dev":
+        collections_url=collections_url.replace("clients3","chromecast-dev.sandbox")
+        images_url=images_url.replace("clients3","chromecast-dev.sandbox")
+    elif args.server=="prod":
+        pass
+        
     # create output directory
     if not os.path.exists("output"):
         os.mkdir("output")
 
     # fetch image collections
     request = backdrop_wallpaper_pb2.GetCollectionsRequest()
-    request.language = "en-US"
-    request.filtering_label.append("chromebook")
-    request.filtering_label.append("google_branded_chromebook")
+    request.language = args.region
+    if not args.unfiltered:
+        request.filtering_label.append("chromebook")
+        request.filtering_label.append("google_branded_chromebook")
     
     response = requests.post(collections_url, data=request.SerializeToString(), headers={"Content-Type": "application/x-protobuf"})
     collections_response = backdrop_wallpaper_pb2.GetCollectionsResponse()
@@ -48,6 +60,9 @@ if __name__=="__main__":
     # iterate over the collections and fetch the list of images within each collection
     for c in collections_response.collections:          
         print("found collection:", c.collection_name)
+
+        if args.list_collections:
+            continue
 
         # create the destination folder for the current collection
         try:
