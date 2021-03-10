@@ -19,6 +19,10 @@ import argparse
 
 import backdrop_wallpaper_pb2
 
+def truncate(n,decimals):
+    multiplier = 10**decimals
+    return int(n*multiplier) / multiplier
+
 if __name__=="__main__":
     # constants
     collections_url="https://clients3.google.com/cast/chromecast/home/wallpaper/collections?rt=b"
@@ -57,6 +61,8 @@ if __name__=="__main__":
     collections_response = backdrop_wallpaper_pb2.GetCollectionsResponse()
     collections_response.ParseFromString(response.content)
 
+    number_downloads=0
+    downloads_total_size=0
     # iterate over the collections and fetch the list of images within each collection
     for c in collections_response.collections:          
         print("found collection:", c.collection_name)
@@ -119,15 +125,23 @@ if __name__=="__main__":
                             output_file=open(destination,"wb")
                             output_file.write(response.content)
                             output_file.close()
-                            print("done")
-                        except:
+                            print("done")                            
+                            number_downloads += 1
+                            downloads_total_size += len(response.content)
+                        except Exception as e:
                             print("failed to save downloaded image ["+destination+"]")
+                            print("error was:")
+                            print(e)
                             continue
                     else:
                         print("error, code was:",response.status_code)   
-                except:
+                except Exception as e:
                     print("failed to download image from collection")
+                    print("error was:")
+                    print(e)
                     continue
             else:
                 print("have")
-                
+
+    if not args.list_collections:                
+        print("# number of downloaded images:",number_downloads, "(total size:",truncate(downloads_total_size/1048576,2),"MiB)")
