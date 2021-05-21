@@ -2,8 +2,8 @@
 #
 # Based on the offical Google Chromium sources, especially:
 #
-#   https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/chromeos/backdrop_wallpaper_handlers/backdrop_wallpaper.proto
-#   https://chromium.googlesource.com/chromium/src/+/master/chrome/browser/chromeos/backdrop_wallpaper_handlers/backdrop_wallpaper_handlers.cc
+#   https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/ash/backdrop_wallpaper_handlers/backdrop_wallpaper.proto
+#   https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/ash/backdrop_wallpaper_handlers/backdrop_wallpaper_handlers.cc
 #
 # first you need to run the Protocol Buffer Compiler to generate the necessary Python wrapper, by running:
 #
@@ -23,6 +23,10 @@ def truncate(n,decimals):
     multiplier = 10**decimals
     return int(n*multiplier) / multiplier
 
+def debug_output(message):
+    if args.debug:
+        print("DEBUG:",message)
+
 if __name__=="__main__":
     # constants
     collections_url="https://clients3.google.com/cast/chromecast/home/wallpaper/collections?rt=b"
@@ -31,11 +35,12 @@ if __name__=="__main__":
     # parse arguments from command line
     parser = argparse.ArgumentParser(description="Download Google Chrome OS Wallpapers")
     parser.add_argument("--server",default="prod",help="server to use (prod|staging|dev), defaults to prod",action="store")
-    parser.add_argument("--region",default="en-US",help="region to use, defaults to en-US",action="store")    
+    parser.add_argument("--region",default="en-US",help="region to use, defaults to en-US",action="store")
     parser.add_argument("--list-collections",default=False,help="only list available collections, don't download",action="store_true")
     parser.add_argument("--unfiltered",default=False,help="don't set a request filter, default is google branded chromebook",action="store_true")
+    parser.add_argument("--debug",default=False,help="Print out debugging information",action="store_true")
     args = parser.parse_args()
-    
+
     # which server to use
     if args.server=="staging":
         collections_url=collections_url.replace("clients3","chromecast-staging.sandbox")
@@ -45,7 +50,9 @@ if __name__=="__main__":
         images_url=images_url.replace("clients3","chromecast-dev.sandbox")
     elif args.server=="prod":
         pass
-        
+
+    debug_output("collections_url=%s,images_url=%s" % (collections_url,images_url))
+
     # create output directory
     if not os.path.exists("output"):
         os.mkdir("output")
@@ -56,7 +63,7 @@ if __name__=="__main__":
     if not args.unfiltered:
         request.filtering_label.append("chromebook")
         request.filtering_label.append("google_branded_chromebook")
-    
+
     response = requests.post(collections_url, data=request.SerializeToString(), headers={"Content-Type": "application/x-protobuf"})
     collections_response = backdrop_wallpaper_pb2.GetCollectionsResponse()
     collections_response.ParseFromString(response.content)
@@ -64,7 +71,7 @@ if __name__=="__main__":
     number_downloads=0
     downloads_total_size=0
     # iterate over the collections and fetch the list of images within each collection
-    for c in collections_response.collections:          
+    for c in collections_response.collections:
         print("found collection:", c.collection_name)
 
         if args.list_collections:
@@ -94,17 +101,17 @@ if __name__=="__main__":
         images_response.ParseFromString(response.content)
         for i in images_response.images:
             full_url=i.image_url+"=s3840" # 4K resolution at max - most images retrieved are smaller
-            
+
             # print information about the image to stdout
             message="    "+str(i.asset_id)+" ("+i.attribution[0].text+")"
             print(message.ljust(80),"... ",end="")
             sys.stdout.flush()
-            
+
             # download the header to check if we have to download the complete image
             header = requests.head(full_url)
             mimetype = header.headers['Content-Type']
             size = int(header.headers['Content-Length'])
-            destination = "output/"+c.collection_name+"/"+str(i.asset_id)+mimetypes.guess_extension(mimetype)   
+            destination = "output/"+c.collection_name+"/"+str(i.asset_id)+mimetypes.guess_extension(mimetype)
             download=True
             try:
                 local_size = os.path.getsize(destination)
@@ -113,7 +120,7 @@ if __name__=="__main__":
             except:
                 # We get a exception if the local file does not exist
                 pass
-            
+
             # we only download the file if we don't have it locally - locally means
             # same filename and size as the remote one
             if download:
@@ -125,7 +132,7 @@ if __name__=="__main__":
                             output_file=open(destination,"wb")
                             output_file.write(response.content)
                             output_file.close()
-                            print("done")                            
+                            print("done")
                             number_downloads += 1
                             downloads_total_size += len(response.content)
                         except Exception as e:
@@ -134,7 +141,7 @@ if __name__=="__main__":
                             print(e)
                             continue
                     else:
-                        print("error, code was:",response.status_code)   
+                        print("error, code was:",response.status_code)
                 except Exception as e:
                     print("failed to download image from collection")
                     print("error was:")
@@ -143,5 +150,5 @@ if __name__=="__main__":
             else:
                 print("have")
 
-    if not args.list_collections:                
+    if not args.list_collections:
         print("# number of downloaded images:",number_downloads, "(total size:",truncate(downloads_total_size/1048576,2),"MiB)")
