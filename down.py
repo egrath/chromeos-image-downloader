@@ -16,6 +16,7 @@ import os
 import mimetypes
 import requests
 import argparse
+import pdb
 
 import backdrop_wallpaper_pb2
 
@@ -25,7 +26,7 @@ def truncate(n,decimals):
 
 def debug_output(message):
     if args.debug:
-        print("DEBUG:",message)
+        print(message)
 
 if __name__=="__main__":
     # constants
@@ -51,7 +52,8 @@ if __name__=="__main__":
     elif args.server=="prod":
         pass
 
-    debug_output("collections_url=%s,images_url=%s" % (collections_url,images_url))
+    debug_output("collections_url=%s" % (collections_url))
+    debug_output("images_url=%s" % (images_url))
 
     # create output directory
     if not os.path.exists("output"):
@@ -63,10 +65,12 @@ if __name__=="__main__":
     if not args.unfiltered:
         request.filtering_label.append("chromebook")
         request.filtering_label.append("google_branded_chromebook")
+    debug_output(request)
 
     response = requests.post(collections_url, data=request.SerializeToString(), headers={"Content-Type": "application/x-protobuf"})
     collections_response = backdrop_wallpaper_pb2.GetCollectionsResponse()
     collections_response.ParseFromString(response.content)
+    debug_output(collections_response)
 
     number_downloads=0
     downloads_total_size=0
@@ -99,8 +103,10 @@ if __name__=="__main__":
         # parse the response and fetch each individual image
         images_response = backdrop_wallpaper_pb2.GetImagesInCollectionResponse()
         images_response.ParseFromString(response.content)
+        debug_output(images_response)
         for i in images_response.images:
             full_url=i.image_url+"=s3840" # 4K resolution at max - most images retrieved are smaller
+            debug_output("full_url=%s" % (full_url))
 
             # print information about the image to stdout
             message="    "+str(i.asset_id)+" ("+i.attribution[0].text+")"
@@ -112,6 +118,7 @@ if __name__=="__main__":
             mimetype = header.headers['Content-Type']
             size = int(header.headers['Content-Length'])
             destination = "output/"+c.collection_name+"/"+str(i.asset_id)+mimetypes.guess_extension(mimetype)
+            debug_output("destination=%s" % (destination))
             download=True
             try:
                 local_size = os.path.getsize(destination)
@@ -126,7 +133,7 @@ if __name__=="__main__":
             if download:
                 print("downloading ... ",end="")
                 try:
-                    response = requests.get(full_url)
+                    response = requests.get(full_url,timeout=10)
                     if response.status_code==200:
                         try:
                             output_file=open(destination,"wb")
