@@ -114,10 +114,25 @@ if __name__=="__main__":
             sys.stdout.flush()
 
             # download the header to check if we have to download the complete image
-            header = requests.head(full_url)
+            try:
+                header = requests.head(full_url)
+            except Exception as e:
+                print("failed to download header for image [%s]" % (full_url))
+                print("error was:")
+                print(e)
+                continue
+                
             mimetype = header.headers['Content-Type']
             size = int(header.headers['Content-Length'])
-            destination = "output/"+c.collection_name+"/"+str(i.asset_id)+mimetypes.guess_extension(mimetype)
+            
+            # we need a special handling for the jpeg mime type, which sometimes gets translated
+            # to .jpe extension and at other times to .jpg, according to the mime-type given. This
+            # seems to be a bug (https://bugs.python.org/issue37943)
+            extension=mimetypes.guess_extension(mimetype,strict=False)
+            if extension.startswith(".jpe"):
+                extension=".jpg"
+                
+            destination = "output/"+c.collection_name+"/"+str(i.asset_id)+extension
             debug_output("destination=%s" % (destination))
             download=True
             try:
