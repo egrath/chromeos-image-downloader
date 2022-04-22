@@ -2,8 +2,8 @@
 #
 # Based on the offical Google Chromium sources, especially:
 #
-#   https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/ash/backdrop_wallpaper_handlers/backdrop_wallpaper.proto
-#   https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/ash/backdrop_wallpaper_handlers/backdrop_wallpaper_handlers.cc
+#   https://chromium.googlesource.com/chromium/src/+/refs/heads/main/ash/webui/personalization_app/proto/backdrop_wallpaper.proto
+#   https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/browser/ash/wallpaper_handlers/wallpaper_handlers.cc
 #
 # first you need to run the Protocol Buffer Compiler to generate the necessary Python wrapper, by running:
 #
