@@ -19,10 +19,36 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='backdrop',
   syntax='proto2',
   serialized_options=_b('H\003'),
-  serialized_pb=_b('\n\x18\x62\x61\x63kdrop_wallpaper.proto\x12\x08\x62\x61\x63kdrop\"\x1b\n\x0b\x41ttribution\x12\x0c\n\x04text\x18\x01 \x01(\t\"l\n\x05Image\x12\x10\n\x08\x61sset_id\x18\x01 \x01(\x06\x12\x11\n\timage_url\x18\x02 \x01(\t\x12\x12\n\naction_url\x18\x03 \x01(\t\x12*\n\x0b\x61ttribution\x18\x04 \x03(\x0b\x32\x15.backdrop.Attribution\"^\n\nCollection\x12\x15\n\rcollection_id\x18\x01 \x01(\t\x12\x17\n\x0f\x63ollection_name\x18\x02 \x01(\t\x12 \n\x07preview\x18\x03 \x03(\x0b\x32\x0f.backdrop.Image\"R\n\x15GetCollectionsRequest\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x0e\n\x06region\x18\x02 \x01(\t\x12\x17\n\x0f\x66iltering_label\x18\x03 \x03(\t\"C\n\x16GetCollectionsResponse\x12)\n\x0b\x63ollections\x18\x01 \x03(\x0b\x32\x14.backdrop.Collection\"p\n\x1cGetImagesInCollectionRequest\x12\x15\n\rcollection_id\x18\x01 \x01(\t\x12\x10\n\x08language\x18\x02 \x01(\t\x12\x0e\n\x06region\x18\x03 \x01(\t\x12\x17\n\x0f\x66iltering_label\x18\x04 \x03(\t\"@\n\x1dGetImagesInCollectionResponse\x12\x1f\n\x06images\x18\x01 \x03(\x0b\x32\x0f.backdrop.Image\"\x88\x01\n\x1dGetImageFromCollectionRequest\x12\x16\n\x0e\x63ollection_ids\x18\x01 \x03(\t\x12\x14\n\x0cresume_token\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12\x0e\n\x06region\x18\x04 \x01(\t\x12\x17\n\x0f\x66iltering_label\x18\x05 \x03(\t\"V\n\x1eGetImageFromCollectionResponse\x12\x1e\n\x05image\x18\x01 \x01(\x0b\x32\x0f.backdrop.Image\x12\x14\n\x0cresume_token\x18\x02 \x01(\tB\x02H\x03')
+  serialized_pb=_b('\n\x18\x62\x61\x63kdrop_wallpaper.proto\x12\x08\x62\x61\x63kdrop\"\x1b\n\x0b\x41ttribution\x12\x0c\n\x04text\x18\x01 \x01(\t\"\x86\x02\n\x05Image\x12\x10\n\x08\x61sset_id\x18\x01 \x01(\x06\x12\x11\n\timage_url\x18\x02 \x01(\t\x12\x12\n\naction_url\x18\x03 \x01(\t\x12*\n\x0b\x61ttribution\x18\x04 \x03(\x0b\x32\x15.backdrop.Attribution\x12\x0f\n\x07unit_id\x18\x06 \x01(\x06\x12-\n\nimage_type\x18\x07 \x01(\x0e\x32\x19.backdrop.Image.ImageType\"X\n\tImageType\x12\x16\n\x12IMAGE_TYPE_UNKNOWN\x10\x00\x12\x19\n\x15IMAGE_TYPE_LIGHT_MODE\x10\x01\x12\x18\n\x14IMAGE_TYPE_DARK_MODE\x10\x02\"^\n\nCollection\x12\x15\n\rcollection_id\x18\x01 \x01(\t\x12\x17\n\x0f\x63ollection_name\x18\x02 \x01(\t\x12 \n\x07preview\x18\x03 \x03(\x0b\x32\x0f.backdrop.Image\"R\n\x15GetCollectionsRequest\x12\x10\n\x08language\x18\x01 \x01(\t\x12\x0e\n\x06region\x18\x02 \x01(\t\x12\x17\n\x0f\x66iltering_label\x18\x03 \x03(\t\"C\n\x16GetCollectionsResponse\x12)\n\x0b\x63ollections\x18\x01 \x03(\x0b\x32\x14.backdrop.Collection\"p\n\x1cGetImagesInCollectionRequest\x12\x15\n\rcollection_id\x18\x01 \x01(\t\x12\x10\n\x08language\x18\x02 \x01(\t\x12\x0e\n\x06region\x18\x03 \x01(\t\x12\x17\n\x0f\x66iltering_label\x18\x04 \x03(\t\"@\n\x1dGetImagesInCollectionResponse\x12\x1f\n\x06images\x18\x01 \x03(\x0b\x32\x0f.backdrop.Image\"\x88\x01\n\x1dGetImageFromCollectionRequest\x12\x16\n\x0e\x63ollection_ids\x18\x01 \x03(\t\x12\x14\n\x0cresume_token\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12\x0e\n\x06region\x18\x04 \x01(\t\x12\x17\n\x0f\x66iltering_label\x18\x05 \x03(\t\"V\n\x1eGetImageFromCollectionResponse\x12\x1e\n\x05image\x18\x01 \x01(\x0b\x32\x0f.backdrop.Image\x12\x14\n\x0cresume_token\x18\x02 \x01(\tB\x02H\x03')
 )
 
 
+
+_IMAGE_IMAGETYPE = _descriptor.EnumDescriptor(
+  name='ImageType',
+  full_name='backdrop.Image.ImageType',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='IMAGE_TYPE_UNKNOWN', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='IMAGE_TYPE_LIGHT_MODE', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='IMAGE_TYPE_DARK_MODE', index=2, number=2,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=242,
+  serialized_end=330,
+)
+_sym_db.RegisterEnumDescriptor(_IMAGE_IMAGETYPE)
 
 
 _ATTRIBUTION = _descriptor.Descriptor(
@@ -91,11 +117,26 @@ _IMAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='unit_id', full_name='backdrop.Image.unit_id', index=4,
+      number=6, type=6, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='image_type', full_name='backdrop.Image.image_type', index=5,
+      number=7, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
+    _IMAGE_IMAGETYPE,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -103,8 +144,8 @@ _IMAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=67,
-  serialized_end=175,
+  serialized_start=68,
+  serialized_end=330,
 )
 
 
@@ -148,8 +189,8 @@ _COLLECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=177,
-  serialized_end=271,
+  serialized_start=332,
+  serialized_end=426,
 )
 
 
@@ -193,8 +234,8 @@ _GETCOLLECTIONSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=273,
-  serialized_end=355,
+  serialized_start=428,
+  serialized_end=510,
 )
 
 
@@ -224,8 +265,8 @@ _GETCOLLECTIONSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=357,
-  serialized_end=424,
+  serialized_start=512,
+  serialized_end=579,
 )
 
 
@@ -276,8 +317,8 @@ _GETIMAGESINCOLLECTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=426,
-  serialized_end=538,
+  serialized_start=581,
+  serialized_end=693,
 )
 
 
@@ -307,8 +348,8 @@ _GETIMAGESINCOLLECTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=540,
-  serialized_end=604,
+  serialized_start=695,
+  serialized_end=759,
 )
 
 
@@ -366,8 +407,8 @@ _GETIMAGEFROMCOLLECTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=607,
-  serialized_end=743,
+  serialized_start=762,
+  serialized_end=898,
 )
 
 
@@ -404,11 +445,13 @@ _GETIMAGEFROMCOLLECTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=745,
-  serialized_end=831,
+  serialized_start=900,
+  serialized_end=986,
 )
 
 _IMAGE.fields_by_name['attribution'].message_type = _ATTRIBUTION
+_IMAGE.fields_by_name['image_type'].enum_type = _IMAGE_IMAGETYPE
+_IMAGE_IMAGETYPE.containing_type = _IMAGE
 _COLLECTION.fields_by_name['preview'].message_type = _IMAGE
 _GETCOLLECTIONSRESPONSE.fields_by_name['collections'].message_type = _COLLECTION
 _GETIMAGESINCOLLECTIONRESPONSE.fields_by_name['images'].message_type = _IMAGE
