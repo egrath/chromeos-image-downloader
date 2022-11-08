@@ -35,7 +35,7 @@ if __name__=="__main__":
 
     # parse arguments from command line
     parser = argparse.ArgumentParser(description="Download Google Chrome OS Wallpapers")
-    parser.add_argument("--server",default="prod",help="server to use (prod|staging|dev), defaults to prod",action="store")
+    parser.add_argument("--server",default="prod",help="server to use (prod|staging|test), defaults to prod",action="store")
     parser.add_argument("--region",default="en-US",help="region to use, defaults to en-US",action="store")
     parser.add_argument("--list-collections",default=False,help="only list available collections, don't download",action="store_true")
     parser.add_argument("--unfiltered",default=False,help="don't set a request filter, default is google branded chromebook",action="store_true")
@@ -44,11 +44,11 @@ if __name__=="__main__":
 
     # which server to use
     if args.server=="staging":
-        collections_url=collections_url.replace("clients3","chromecast-staging.sandbox")
-        images_url=images_url.replace("clients3","chromecast-staging.sandbox")
-    elif args.server=="dev":
-        collections_url=collections_url.replace("clients3","chromecast-dev.sandbox")
-        images_url=images_url.replace("clients3","chromecast-dev.sandbox")
+        collections_url=collections_url.replace("clients3","clients2")
+        images_url=images_url.replace("clients3","clients2")
+    elif args.server=="test":
+        collections_url=collections_url.replace("clients3","clients1")
+        images_url=images_url.replace("clients3","clients1")
     elif args.server=="prod":
         pass
 
