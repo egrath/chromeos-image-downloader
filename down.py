@@ -38,7 +38,7 @@ if __name__=="__main__":
     parser.add_argument("--server",default="prod",help="server to use (prod|staging|test), defaults to prod",action="store")
     parser.add_argument("--region",default="en-US",help="region to use, defaults to en-US",action="store")
     parser.add_argument("--list-collections",default=False,help="only list available collections, don't download",action="store_true")
-    parser.add_argument("--unfiltered",default=False,help="don't set a request filter, default is google branded chromebook",action="store_true")
+    parser.add_argument("--unfiltered",default=False,help="don't set a request filter, default is to retrieve images for all filters",action="store_true")
     parser.add_argument("--debug",default=False,help="Print out debugging information",action="store_true")
     args = parser.parse_args()
 
@@ -59,12 +59,19 @@ if __name__=="__main__":
     if not os.path.exists("output"):
         os.mkdir("output")
 
+    # filter list
+    filters = list()
+    if not args.unfiltered:
+        filters.append("chromebook")
+        filters.append("google_branded_chromebook")
+        filters.append("chromebook_time_of_day")
+
     # fetch image collections
     request = backdrop_wallpaper_pb2.GetCollectionsRequest()
     request.language = args.region
     if not args.unfiltered:
-        request.filtering_label.append("chromebook")
-        request.filtering_label.append("google_branded_chromebook")
+        for f in filters:
+            request.filtering_label.append(f)
     debug_output(request)
 
     response = requests.post(collections_url, data=request.SerializeToString(), headers={"Content-Type": "application/x-protobuf"})
@@ -93,8 +100,9 @@ if __name__=="__main__":
         try:
             backdrop_request=backdrop_wallpaper_pb2.GetImagesInCollectionRequest()
             backdrop_request.collection_id = c.collection_id
-            backdrop_request.filtering_label.append("chromebook")
-            backdrop_request.filtering_label.append("google_branded_chromebook")
+            if not args.unfiltered:
+                for f in filters:
+                    backdrop_request.filtering_label.append(f)
             response=requests.post(images_url,headers={"Content-Type": "application/x-protobuf"},data=backdrop_request.SerializeToString())
         except:
             print("failed to download collection content for ["+c.collection_name+"]")
